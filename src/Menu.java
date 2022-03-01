@@ -2,6 +2,10 @@
 import java.awt.*;
 
 import java.awt.event.*;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 
 import javax.swing.*;
@@ -14,10 +18,11 @@ import java.util.ArrayList;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Scanner;
 
 public class Menu extends JFrame {
 
-	private ArrayList<Customer> customerList = new ArrayList<Customer>();
+	private static ArrayList<Customer> customerList = new ArrayList<Customer>();
 	private int position = 0;
 	private String password;
 	private Customer customer = null;
@@ -33,9 +38,72 @@ public class Menu extends JFrame {
 	JPanel panel2;
 	JButton add;
 	String PPS, firstName, surname, DOB, CustomerID;
+	static String ppsFromFile = "";
+	static String surnameFromFile = "";
+	static String firstNameFromFile = "";
+	static String DOBFromFile = "";
+	static String custIDFromFile = "";
+	static String passwordFromFile = "";
 
 	public static void main(String[] args) {
 		Menu driver = new Menu();
+
+		try {
+			File myFile = new File("C:/Paddy/CustomerDetails.txt");
+			Scanner fileReader = new Scanner(myFile);
+			while (fileReader.hasNextLine()) {
+				String data = fileReader.nextLine();
+				if (data.contains("PPS number")) {
+					String[] ppsSplit = data.split("= ");
+					ppsFromFile = ppsSplit[1];
+					System.out.println("PPS: " + ppsFromFile);
+				} else if (data.contains("Surname")) {
+					String[] surnameSplit = data.split("= ");
+					surnameFromFile = surnameSplit[1];
+					System.out.println("PPS: " + surnameFromFile);
+				} else if (data.contains("First Name")) {
+					String[] firstNameSplit = data.split("= ");
+					firstNameFromFile = firstNameSplit[1];
+					System.out.println("PPS: " + firstNameFromFile);
+				} else if (data.contains("Date of Birth")) {
+					String[] dobSplit = data.split("= ");
+					DOBFromFile = dobSplit[1];
+					System.out.println("PPS: " + DOBFromFile);
+				} else if (data.contains("Customer ID")) {
+					String[] custIdSplit = data.split("= ");
+					custIDFromFile = custIdSplit[1];
+					System.out.println("PPS: " + custIDFromFile);
+				} else if (data.contains("Password")) {
+					String[] passwordSplit = data.split("= ");
+					passwordFromFile = passwordSplit[1];
+					System.out.println("PPS: " + passwordFromFile);
+				}
+				
+				ArrayList<CustomerAccount> accounts = new ArrayList<CustomerAccount>();
+				
+				if(!ppsFromFile.isEmpty() && !surnameFromFile.isEmpty() && !firstNameFromFile.isEmpty() && !DOBFromFile.isEmpty() && !custIDFromFile.isEmpty() && !passwordFromFile.isEmpty()) {
+					Customer cust = new Customer(ppsFromFile, surnameFromFile, firstNameFromFile, DOBFromFile, custIDFromFile, passwordFromFile, accounts);
+					customerList.add(cust);
+					
+					ppsFromFile = "";
+					surnameFromFile = "";
+					firstNameFromFile = "";
+					DOBFromFile = "";
+					custIDFromFile = "";
+					passwordFromFile = "";
+				} else {
+					
+				}
+				
+
+			}
+
+			fileReader.close();
+
+		} catch (FileNotFoundException exception) {
+			exception.printStackTrace();
+		}
+
 		driver.menuStart();
 	}
 
@@ -80,12 +148,12 @@ public class Menu extends JFrame {
 		content.add(userTypePanel);
 		content.add(continuePanel);
 		// Testing
-		ArrayList<CustomerAccount> accounts = new ArrayList<CustomerAccount>();
-		ArrayList<AccountTransaction> transactions = new ArrayList<AccountTransaction>();
-		CustomerAccount deposit = new CustomerDepositAccount(1.25, "123", 0.00, transactions);
-		accounts.add(deposit);
-		Customer test = new Customer("123", "Largey", "Peter", "15/12/1994", "ID123", "1234567", accounts);
-		customerList.add(test);
+//		ArrayList<CustomerAccount> accounts = new ArrayList<CustomerAccount>();
+//		ArrayList<AccountTransaction> transactions = new ArrayList<AccountTransaction>();
+//		CustomerAccount deposit = new CustomerDepositAccount(1.25, "123", 0.00, transactions);
+//		accounts.add(deposit);
+//		Customer test = new Customer("123", "Largey", "Peter", "15/12/1994", "ID123", "1234567", accounts);
+//		customerList.add(test);
 
 		continueButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent ae) {
@@ -138,36 +206,75 @@ public class Menu extends JFrame {
 
 							CustomerID = "ID" + PPS;
 
-							add.addActionListener(new ActionListener() {
-								public void actionPerformed(ActionEvent e) {
-									f1.dispose();
+							ArrayList<String> ids = new ArrayList<String>();
+							// Deleted to avoid pressing add button twice
+//							add.addActionListener(new ActionListener() {
+//								public void actionPerformed(ActionEvent e) {
+							f1.dispose();
 
-									boolean loop = true;
-									while (loop) {
-										password = JOptionPane.showInputDialog(f, "Enter 7 character Password;");
+							boolean loop = true;
+							while (loop) {
+								password = JOptionPane.showInputDialog(f, "Enter 7 character Password;");
 
-										if (password.length() != 7)// Making sure password is 7 characters
-										{
-											JOptionPane.showMessageDialog(null, null,
-													"Password must be 7 charatcers long", JOptionPane.OK_OPTION);
-										} else {
-											loop = false;
-										}
-									}
-
-									ArrayList<CustomerAccount> accounts = new ArrayList<CustomerAccount>();
-									Customer customer = new Customer(PPS, surname, firstName, DOB, CustomerID, password,
-											accounts);
-
-									customerList.add(customer);
-
-									JOptionPane.showMessageDialog(f,
-											"CustomerID = " + CustomerID + "\n Password = " + password,
-											"Customer created.", JOptionPane.INFORMATION_MESSAGE);
-									menuStart();
-									//f.dispose(); //Removed as it destroys the main frame thus crashing the application
+								if (password.length() != 7)// Making sure password is 7 characters
+								{
+									JOptionPane.showMessageDialog(null, null, "Password must be 7 charatcers long",
+											JOptionPane.OK_OPTION);
+								} else {
+									loop = false;
 								}
-							});
+							}
+
+							try {
+								File myFile = new File("C:/Paddy/CustomerInfo.txt");
+								Scanner fileReader = new Scanner(myFile);
+								while (fileReader.hasNextLine()) {
+									String data = fileReader.nextLine();
+									ids.add(data);
+								}
+								fileReader.close();
+
+							} catch (FileNotFoundException exception) {
+								exception.printStackTrace();
+							}
+
+							if (!ids.contains(CustomerID)) {
+								ArrayList<CustomerAccount> accounts = new ArrayList<CustomerAccount>();
+								Customer customer = new Customer(PPS, surname, firstName, DOB, CustomerID, password,
+										accounts);
+
+								customerList.add(customer);
+
+								try {
+									FileWriter myWriter = new FileWriter("C:/Paddy/CustomerInfo.txt", true);
+									FileWriter detailsWriter = new FileWriter("C:/Paddy/CustomerDetails.txt", true);
+
+									// ids.add(customer.getCustomerID());
+									myWriter.write(customer.getCustomerID() + "\n");
+									detailsWriter.write(customer.toString());
+									myWriter.close();
+									detailsWriter.close();
+									System.out.println("Successfully wrote to the file.");
+
+								} catch (IOException exception) {
+									exception.printStackTrace();
+								}
+								JOptionPane.showMessageDialog(f,
+										"CustomerID = " + CustomerID + "\n Password = " + password, "Customer created.",
+										JOptionPane.INFORMATION_MESSAGE);
+
+								menuStart();
+							} else {
+								JOptionPane.showMessageDialog(f, "Customer Id already exists", "Error",
+										JOptionPane.INFORMATION_MESSAGE);
+
+								menuStart();
+							}
+
+							// f.dispose(); //Removed as it destroys the main frame thus crashing the
+							// application
+//								}
+//							});
 						}
 					});
 					JButton cancel = new JButton("Cancel");
@@ -236,7 +343,7 @@ public class Menu extends JFrame {
 					}
 
 					if (cont) {
-						f.dispose();//Changed from f1 to prevent a null pointer exception
+						f.dispose();// Changed from f1 to prevent a null pointer exception
 						loop = false;
 						admin();
 					}
@@ -1074,11 +1181,32 @@ public class Menu extends JFrame {
 
 								ATMCard atm = new ATMCard(randomPIN, valid);
 
-								CustomerCurrentAccount current = new CustomerCurrentAccount(atm, number, balance,
-										transactionList);
+								double overdraft = 0.00;
+								boolean correctValue = true;
+
+								while (correctValue) {
+									String overdraftInput = (String) JOptionPane.showInputDialog(null,
+											"Please enter an overdraft amount");
+									// Regex to ensure the user inputs a number followed by an optional decimal
+									// point and following numbers
+									if (!overdraftInput.matches("^[0-9]*\\.?[0-9]*$")) {
+
+										JOptionPane.showMessageDialog(null,
+												"Overdraft must contain a number and a decimal point", "Error",
+												JOptionPane.OK_OPTION);
+									} else {
+										overdraft = Double.parseDouble(overdraftInput);
+										correctValue = false;
+									}
+								}
+
+								CustomerCurrentAccount current = new CustomerCurrentAccount(atm, overdraft, number,
+										balance, transactionList);
 
 								customer.getAccounts().add(current);
-								JOptionPane.showMessageDialog(f, "Account number = " + number + "\n PIN = " + pin,
+								JOptionPane.showMessageDialog(f,
+										"Account number = " + number + "\n PIN = " + pin + "\n Balance = €" + balance
+												+ "\n Overdraft = €" + overdraft,
 										"Account created.", JOptionPane.INFORMATION_MESSAGE);
 
 								f.dispose();

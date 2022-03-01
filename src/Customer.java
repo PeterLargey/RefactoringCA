@@ -116,7 +116,8 @@ public class Customer {
 				+ "Surname = " + this.surname + "\n"
 				+ "First Name = " + this.firstName + "\n"
 				+ "Date of Birth = " + this.DOB + "\n"
-				+ "Customer ID = " + this.customerID;
+				+ "Customer ID = " + this.customerID +"\n"
+				+ "Password = " + this.password +"\n";
 			
 	}
 	
