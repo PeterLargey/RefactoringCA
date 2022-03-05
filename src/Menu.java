@@ -20,7 +20,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Scanner;
 
-public class Menu extends JFrame implements GUISetUp, GUIResponses {
+public class Menu extends JFrame implements IGUISetUp, IGUIResponses, IMenuNavigation {
 
 	private static final long serialVersionUID = 1L;
 	private static ArrayList<Customer> customerList = new ArrayList<Customer>();
@@ -1567,7 +1567,7 @@ public class Menu extends JFrame implements GUISetUp, GUIResponses {
 		}
 	}
 	
-	private void customerDetails(JTextField firstNameTextField, JTextField surnameTextField,
+	public void customerDetails(JTextField firstNameTextField, JTextField surnameTextField,
 			JTextField ppsTextField, JTextField dobTextField, JTextField customerIDTextField,
 			JTextField passwordTextField, int position) {
 		
@@ -1592,16 +1592,19 @@ public class Menu extends JFrame implements GUISetUp, GUIResponses {
 		return aCustomer;		
 	}
 	
+	@Override
 	public void navigateToAdmin(JFrame frame) {
 		frame.dispose();
 		admin();
 	}
 	
+	@Override
 	public void navigateToMainMenu(JFrame frame) {
 		frame.dispose();
 		menuStart();		
 	}
 	
+	@Override
 	public void navigateToCustomerMenu(JFrame frame, Customer cust) {
 		frame.dispose();
 		customer(cust);

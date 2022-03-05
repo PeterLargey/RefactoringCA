@@ -7,7 +7,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
-public interface GUISetUp {
+public interface IGUISetUp {
 
 	public JFrame setUpFrame(String name);
 	

@@ -1,7 +1,7 @@
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
-public interface GUIResponses {
+public interface IGUIResponses {
 	
 	public void noCustomersInCustomerList(JFrame frame);
 	
